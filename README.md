@@ -11,7 +11,7 @@ This project contains two Python 3 packages:
 
 ### Installation
 ```
-python3 -m pip install "https://github.com/jonathanhaigh/remote-temperature#egg=remote-temperature-client&subdirectory=remote-temperature-client"
+python3 -m pip install "git+https://github.com/jonathanhaigh/remote-temperature#egg=remote-temperature-client&subdirectory=remote-temperature-client"
 ```
 
 The "w1\_therm" and "w1\_gpio" kernel modules must be available on the device.
@@ -65,7 +65,7 @@ remote-temperature-client \
 
 ## Installation
 ```
-python3 -m pip install "https://github.com/jonathanhaigh/remote-temperature#egg=remote-temperature-server&subdirectory=remote-temperature-server"
+python3 -m pip install "git+https://github.com/jonathanhaigh/remote-temperature#egg=remote-temperature-server&subdirectory=remote-temperature-server"
 ```
 
 ## Usage
