@@ -9,6 +9,7 @@ from daemon.pidfile import TimeoutPIDLockFile
 import datetime
 import logging
 from logging.handlers import RotatingFileHandler
+import signal
 import time
 from w1thermsensor import W1ThermSensor, W1ThermSensorError
 import xmlrpc
@@ -28,6 +29,7 @@ class RemoteTemperatureClient:
         self._period = args.period
         self._sanity_check_low = args.sanity_check_low
         self._sanity_check_high = args.sanity_check_high
+        self._quit = False
         try:
             self._rpc_proxy = xmlrpc.client.ServerProxy(args.server)
         except Exception as e:
@@ -35,10 +37,15 @@ class RemoteTemperatureClient:
             raise
 
     def run_forever(self):
-        while True:
+        while not self._quit:
             for sensor in W1ThermSensor.get_available_sensors():
                 self._read_and_record_temperature(sensor)
             time.sleep(self._period)
+        self._logger.info("quitting")
+
+    def quit(self):
+      self._logger.info("Received quit request")
+      self._quit = True
 
     def _init_logger(self, args):
         self._logger = logging.getLogger(__name__)
@@ -192,6 +199,13 @@ def parse_args():
 
 def run(args):
     client = RemoteTemperatureClient(args)
+
+    def handle_sigterm(signum, frame):
+      client.quit()
+
+    signal.signal(signal.SIGINT, handle_sigterm)
+    signal.signal(signal.SIGTERM, handle_sigterm)
+
     client.run_forever()
 
 
