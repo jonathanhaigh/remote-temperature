@@ -1,0 +1,34 @@
+name: remote-temperature-client
+version: 0.0.1
+summary: remote-temperature-client
+description: Daemon to write temperature data to a remote database
+base: core18
+confinement: strict
+
+plugs:
+  w1:
+    interface: system-files
+    write:
+      - /sys/devices/w1_bus_master1
+    read:
+      - /sys/bus/w1
+
+architectures:
+  - build-on: arm64
+  - build-on: armhf
+  - build-on: amd64
+
+parts:
+  test-app:
+    plugin: python
+    python-version: python3
+    source: .
+
+apps:
+  remote-temperature-client:
+    command: bin/remote-temperature-client
+    plugs:
+      - network
+      - kernel-module-control
+      - w1
+      - home
